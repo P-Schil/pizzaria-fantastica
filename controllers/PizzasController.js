@@ -32,16 +32,19 @@ module.exports = {
 			id:pizzas[pizzas.length - 1].id + 1,
 			nome: req.body.nome,
 			ingredientes: req.body.ingredientes.split(","),
-			preco: req.body.preco,
+			preco: number(req.body.preco),
 			img:"/img/calabresa.jpg",
 			destaque: true
-		}
+		}//CRUD CREATE READ UPDATE DELETE
 		//File System
 		//const fs = require('fs');
+		
 
 	// res.render("pizza-create")
 	pizza.push(pizza);
 }
+	fs.writerFileSync(path.join(____dirname,"..database/Pizzas.json"),JSON.stringify(pizzas,null,1));
+	res.redirect("/");
 }
 // busca:(req,res)=>{
 // 	res.send(req.bbody.busca) se for POST
