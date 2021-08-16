@@ -1,20 +1,29 @@
-  
+const { response } = require('express');
 var express = require('express');
 var router = express.Router();
-const VerificaUsuarioLogado = require("../middlewares/VerificaUsuarioLogado");
-const upload = require("../lib/upload");
+
+
+// Configurando o multer para tratar a requisição com arquivos anexos
+const multer = require("multer");
+const uniqid = require("uniqid");
+const storageDeFotoDePizza = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, "public/img")
+    },
+    filename: (req, file, cb) =>{
+        cb(null, uniqid() + '-' + file.originalname);
+    }
+})
+const uploadDeFotoDePizza = multer({storage: storageDeFotoDePizza});
+
 
 const PizzasController = require('../controllers/PizzasController');
 
 /* GET home page. */
 router.get('/', PizzasController.index);
-router.get('/busca', PizzasController.search);
-router.get('/pizzas/:id/edit', VerificaUsuarioLogado,PizzasController.edit);
-router.get('/pizzas/create', VerificaUsuarioLogado, PizzasController.create);
+router.get('/pizzas/create', PizzasController.create);
+router.post('/pizzas/create',uploadDeFotoDePizza.single('img'), PizzasController.store);
 router.get('/pizzas/:id', PizzasController.show);
-router.get('/pizzas', VerificaUsuarioLogado, PizzasController.list);
-router.post('/pizzas', VerificaUsuarioLogado, upload.single("img"), PizzasController.store);
-router.put('/pizzas/:id/update', VerificaUsuarioLogado, PizzasController.update);
-router.delete('/pizzas/:id', VerificaUsuarioLogado, PizzasController.delete);
+router.get('/busca', PizzasController.busca);
 
 module.exports = router;
